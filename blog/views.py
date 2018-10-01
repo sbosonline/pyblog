@@ -32,11 +32,13 @@ def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
     form = PostForm(instance=post)
 
-    if request.method == 'POST' and form.is_valid():
-        post = form.save(commit=False)
-        post.author = request.user
-        post.save()
-        return redirect('post_detail', pk=post.pk)
+    if request.method == 'POST':
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            return redirect('post_detail', pk=post.pk)
 
     return render(request, 'blog/post_edit.html', {'form': form})
 

@@ -8,6 +8,11 @@ from django.template import RequestContext
 
 def post_list(request):
     posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
+
+    approved_comment_map = {}
+    for p in posts:
+        approved_comment_map[p] = p.get_approved_comments().count()
+
     return render(request, 'blog/post_list.html', {'posts': Post.objects.all()})
 
 def post_detail(request, pk):
@@ -30,15 +35,14 @@ def post_new(request):
 @login_required
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    if request.method == "POST":
-        form = PostForm(request.POST, instance=post)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.save()
-            return redirect('post_detail', pk=post.pk)
-    else:
-        form = PostForm(request.POST, instance=post)
+    form = PostForm(instance=post)
+
+    if request.method == 'POST' and form.is_valid():
+        post = form.save(commit=False)
+        post.author = request.user
+        post.save()
+        return redirect('post_detail', pk=post.pk)
+
     return render(request, 'blog/post_edit.html', {'form': form})
 
 @login_required
@@ -53,7 +57,7 @@ def post_publish(request,pk):
 
 def add_comment_to_post(request,pk):
     post=get_object_or_404(Post, pk=pk)
-    
+
     form = CommentForm(request.POST)
     if form.is_valid():
         comment = form.save(commit=False)

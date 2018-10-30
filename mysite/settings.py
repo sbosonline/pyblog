@@ -25,7 +25,7 @@ SECRET_KEY = '-yw*$&d(u3rc5f17)3tud8=9k_p4&s(@-p7fnmyxcy7pd29og1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", False)
 
-ALLOWED_HOSTS = ['127.0.0.1','namdi.pythonanywhere.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'namdi.pythonanywhere.com']
 
 
 # Application definition
